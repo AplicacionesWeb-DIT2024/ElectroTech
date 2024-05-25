@@ -1,13 +1,16 @@
-@extends('layouts.base')
+@extends('layouts.layout')
+@section('title')
+    Listado categorias
+@endsection
 
-@section('content')
+@section('body')
 <div class="row">
     <div class="col-12">
         <div>
             <h2 class="text-black">Listado de Categorias</h2>
         </div>
         <div>
-            <a href="{{route('categoria.create')}}" class="btn btn-primary">Crear categoria</a>
+            <a href="{{route('categorias.create')}}" class="btn btn-primary">Crear categoria</a>
         </div>
     </div>
 
@@ -30,9 +33,9 @@
                 <td class="fw-bold">{{$categoria->nombre}} </td>
                 <td>{{$categoria->descripcion}}</td> 
                 <td>
-                    <a href="{{ route('categoria.edit', $categoria) }}" class="btn btn-warning">Editar</a>
+                    <a href="{{ route('categorias.edit', $categoria) }}" class="btn btn-warning">Editar</a>
 
-                    <form action="{{ route('categoria.destroy', $categoria) }}" method="post" class="d-inline">
+                    <form action="{{ route('categorias.destroy', $categoria) }}" method="post" class="d-inline">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">Eliminar</button>

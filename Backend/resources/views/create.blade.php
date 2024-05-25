@@ -1,13 +1,16 @@
-@extends('layouts.base')
+@extends('layouts.layout')
+@section('title')
+    Nueva Categoria
+@endsection
 
-@section('content')
+@section('body')
 <div class="row">
     <div class="col-12">
         <div>
             <h2>Crear Categoria</h2>
         </div>
         <div>
-            <a href="{{route('categoria.index')}}" class="btn btn-primary">Volver</a>
+            <a href="{{route('categorias.index')}}" class="btn btn-primary">Volver</a>
         </div>
     </div>
 
@@ -22,7 +25,7 @@
     </div>
     @endif
 
-    <form action="{{route('categoria.store')}}" method="POST">
+    <form action="{{route('categorias.store')}}" method="POST">
         @csrf
         <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-12 mt-2">

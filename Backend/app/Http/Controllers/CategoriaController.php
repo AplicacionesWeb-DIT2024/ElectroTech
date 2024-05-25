@@ -36,7 +36,7 @@ class CategoriaController extends Controller
             'descripcion' => 'required',
         ]);
         Categoria::create($request->all());
-        return redirect()->route('categoria.index')->with('success','Categoria creada con exito'); 
+        return redirect()->route('categorias.index')->with('success','Categoria creada con exito'); 
     }
 
     /**
@@ -61,7 +61,7 @@ class CategoriaController extends Controller
     public function update(Request $request, Categoria $categoria): RedirectResponse 
     {
         $categoria->update($request->all());
-        return redirect()->route('categoria.index')->with('success','Categoria actualizada con exito'); 
+        return redirect()->route('categorias.index')->with('success','Categoria actualizada con exito'); 
     }
 
     /**
