@@ -105,14 +105,18 @@ class ProductoController extends Controller
             $producto->save();
         }
         if($request->hasFile('image2')){
-            Storage::disk('public')->delete($producto->image2);
+            if (! is_null($producto->image2)){
+                Storage::disk('public')->delete($producto->image2);
+            }
             $nombre = $producto->id.'_2.'.$request->file('image2')->getClientOriginalExtension();
             $img = $request->file('image2')->storeAs('public/img',$nombre);
             $producto->image2 = '/img/'.$nombre;
             $producto->save();
         }
         if($request->hasFile('image3')){
-            Storage::disk('public')->delete($producto->image3);
+            if (! is_null($producto->image3)){
+                Storage::disk('public')->delete($producto->image3);
+            }
             $nombre = $producto->id.'_3.'.$request->file('image3')->getClientOriginalExtension();
             $img = $request->file('image3')->storeAs('public/img',$nombre);
             $producto->image3 = '/img/'.$nombre;

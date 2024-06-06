@@ -1,10 +1,10 @@
-@extends('Productos.form')
+@extends('Categorias.form')
 @section('icon')
 <i class="fa-solid fa-plus"></i>
 @endsection
 @section('formName')
-    Nuevo Producto
+    Nueva Categoria
 @endsection
 @section('action')
-    action = "{{route('productos.store')}}"
+    action = "{{route('categorias.store')}}"
 @endsection

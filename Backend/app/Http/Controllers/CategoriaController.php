@@ -15,7 +15,7 @@ class CategoriaController extends Controller
     public function index(): View
     {
         $categorias = Categoria::latest()->paginate(5);
-        return view('index', ['categorias' => $categorias]);
+        return view('Categorias.index', ['categorias' => $categorias]);
     }
 
     /**
@@ -23,7 +23,7 @@ class CategoriaController extends Controller
      */
     public function create(): View
     {
-        return view('create');
+        return view('Categorias.create');
     }
 
     /**
@@ -52,7 +52,7 @@ class CategoriaController extends Controller
      */
     public function edit(Categoria $categoria): View
     {
-        return view('edit',['categoria' => $categoria]);
+        return view('Categorias.edit',['categoria' => $categoria]);
     }
 
     /**
@@ -69,6 +69,7 @@ class CategoriaController extends Controller
      */
     public function destroy(Categoria $categoria)
     {
-        dd($categoria);
+        $categoria->delete();
+        return redirect()->route('categorias.index')->with('success','Categoria eliminada');
     }
 }
