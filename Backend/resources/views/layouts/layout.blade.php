@@ -85,7 +85,16 @@
                 </div>
             </div>
         </div>
-@endif
+      @endif
+      @if($msj = Session::get('error'))
+        <div class="row" id="alerta" style="position: fixed; bottom:11px; right:8px; z-index:4;">
+            <div class=”container”>
+                <div class="alert alert-danger">
+                    <p><i class="fa-solid fa-xmark"></i> {{$msj}}</p>
+                </div>
+            </div>
+        </div>
+      @endif
 </body>
   @vite(['resources/js/mensaje.js'])
   @yield('js')
