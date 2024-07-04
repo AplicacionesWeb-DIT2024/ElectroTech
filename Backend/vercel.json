@@ -9,10 +9,15 @@
         { "src": "/build/(.*)", "dest": "/public/build/" },
         { "src": "/resources/(.*)", "dest": "/public/resources/" },
         {
+            "src": "/favicon/(.*)",
+            "dest": "/public/favicon/"
+          },
+        {
         "src": "/(.*)",
         "dest": "/api/index.php"
     }],
     "env": {
+        "APP_NAME": "Backend",
         "APP_ENV": "production",
         "APP_DEBUG": "true",
         "APP_URL": "https://laurldetuproyecto.com",
@@ -24,6 +29,7 @@
         "VIEW_COMPILED_PATH": "/tmp",
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
-        "SESSION_DRIVER": "cookie"
+        "SESSION_DRIVER": "cookie",
+        "NODE_PATH": "node"
     }
 }
