@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 
 class ProductoController extends Controller
@@ -46,21 +47,31 @@ class ProductoController extends Controller
         $producto = Producto::create($request->all());
 
         if($request->hasFile('image1')){
-            $nombre = $producto->id.'_1.'.$request->file('image1')->getClientOriginalExtension();
+            /* $nombre = $producto->id.'_1.'.$request->file('image1')->getClientOriginalExtension();
             $img = $request->file('image1')->storeAs('public/img',$nombre);
-            $producto->image1 = '/img/'.$nombre;
+            $producto->image1 = '/img/'.$nombre; */
+            $cloudinaryImage = $request->file('image1')->storeOnCloudinary('products');
+            $public_id = $cloudinaryImage->getPublicId();
+            $url = $cloudinaryImage->getSecurePath();
+            $producto->image1 = $url;
             $producto->save();
         }
         if($request->hasFile('image2')){
-            $nombre = $producto->id.'_2.'.$request->file('image2')->getClientOriginalExtension();
+            /* $nombre = $producto->id.'_2.'.$request->file('image2')->getClientOriginalExtension();
             $img = $request->file('image2')->storeAs('public/img',$nombre);
-            $producto->image2 = '/img/'.$nombre;
+            $producto->image2 = '/img/'.$nombre; */
+            $cloudinaryImage = $request->file('image2')->storeOnCloudinary('products');
+            $url = $cloudinaryImage->getSecurePath();
+            $producto->image2 = $url;
             $producto->save();
         }
         if($request->hasFile('image3')){
-            $nombre = $producto->id.'_3.'.$request->file('image3')->getClientOriginalExtension();
+            /* $nombre = $producto->id.'_3.'.$request->file('image3')->getClientOriginalExtension();
             $img = $request->file('image3')->storeAs('public/img',$nombre);
-            $producto->image3 = '/img/'.$nombre;
+            $producto->image3 = '/img/'.$nombre; */
+            $cloudinaryImage = $request->file('image3')->storeOnCloudinary('products');
+            $url = $cloudinaryImage->getSecurePath();
+            $producto->image3 = $url;
             $producto->save();
         }
 
@@ -98,28 +109,41 @@ class ProductoController extends Controller
         ]);
 
         if($request->hasFile('image1')){
-            Storage::disk('public')->delete($producto->image1);
+            /* Storage::disk('public')->delete($producto->image1);
             $nombre = $producto->id.'_1.'.$request->file('image1')->getClientOriginalExtension();
             $img = $request->file('image1')->storeAs('public/img',$nombre);
-            $producto->image1 = '/img/'.$nombre;
+            $producto->image1 = '/img/'.$nombre; */
+            Cloudinary::destroy($producto->image1);
+            $cloudinaryImage = $request->file('image1')->storeOnCloudinary('products');
+            /* $public_id = $cloudinaryImage->getPublicId(); */
+            $url = $cloudinaryImage->getSecurePath();
+            $producto->image1 = $url;
             $producto->save();
         }
         if($request->hasFile('image2')){
             if (! is_null($producto->image2)){
-                Storage::disk('public')->delete($producto->image2);
+                /* Storage::disk('public')->delete($producto->image2); */
+                Cloudinary::destroy($producto->image2);
             }
-            $nombre = $producto->id.'_2.'.$request->file('image2')->getClientOriginalExtension();
+            /* $nombre = $producto->id.'_2.'.$request->file('image2')->getClientOriginalExtension();
             $img = $request->file('image2')->storeAs('public/img',$nombre);
-            $producto->image2 = '/img/'.$nombre;
+            $producto->image2 = '/img/'.$nombre; */
+            $cloudinaryImage = $request->file('image2')->storeOnCloudinary('products');
+            $url = $cloudinaryImage->getSecurePath();
+            $producto->image2 = $url;
             $producto->save();
         }
         if($request->hasFile('image3')){
             if (! is_null($producto->image3)){
-                Storage::disk('public')->delete($producto->image3);
+                /* Storage::disk('public')->delete($producto->image3); */
+                Cloudinary::destroy($producto->image3);
             }
-            $nombre = $producto->id.'_3.'.$request->file('image3')->getClientOriginalExtension();
+            /* $nombre = $producto->id.'_3.'.$request->file('image3')->getClientOriginalExtension();
             $img = $request->file('image3')->storeAs('public/img',$nombre);
-            $producto->image3 = '/img/'.$nombre;
+            $producto->image3 = '/img/'.$nombre; */
+            $cloudinaryImage = $request->file('image3')->storeOnCloudinary('products');
+            $url = $cloudinaryImage->getSecurePath();
+            $producto->image3 = $url;
             $producto->save();
         }
         $producto->update($request->input());
@@ -131,15 +155,25 @@ class ProductoController extends Controller
      */
     public function destroy(Producto $producto)
     {
-        Storage::disk('public')->delete($producto->image1);
+        $images = [];
+        array_push($images,$producto->image1);
         
         if (! is_null($producto->image2)){
-            Storage::disk('public')->delete($producto->image2);
+            array_push($images,$producto->image2);
         }
         if (! is_null($producto->image3)){
-            Storage::disk('public')->delete($producto->image3);
+            array_push($images,$producto->image3);
         }
-        $producto->delete();
+        try {
+            $producto->delete();
+        } catch (\Exception $e) {
+            return redirect()->route('productos.index')->with('error',"No es posible eliminar el producto {$producto->nombre} por estar referenciado");
+        }
+
+        foreach($images as $key => $value){
+            /* Storage::disk('public')->delete($value); */
+            Cloudinary::destroy($value);
+        }
         return redirect()->route('productos.index')->with('success','Producto eliminado');
 
     }

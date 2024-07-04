@@ -3,7 +3,7 @@
 <i class="fa-solid fa-pen-to-square"></i>
 @endsection
 @section('formName')
-    Editar <b>{{$categoria->nombre}}</b>
+    Editar {{$categoria->nombre}}
 @endsection
 @section('action')
     action = "{{route('categorias.update',$categoria)}}"

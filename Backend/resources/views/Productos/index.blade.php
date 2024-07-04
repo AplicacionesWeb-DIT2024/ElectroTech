@@ -34,7 +34,7 @@
                             <td>{{ $row->garantia }}</td>
                             <td>{{ $row->stock }}</td>
                             <td>
-                                <img class="img-fluid" width="120" src="/storage/{{ $row->image1}}">
+                                <img class="img-fluid" width="120" src="{{ $row->image1}}">
                             </td>
                             <td>
                                 <a class="btn btn-warning" href="{{route('productos.edit',$row->id)}}">

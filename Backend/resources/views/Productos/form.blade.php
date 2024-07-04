@@ -102,7 +102,7 @@
     @if(!isset($producto)) required @endif accept="image/*">
     <div class="preview form-control" id="preview1">
     @if(@isset($producto->image1)) 
-        <img src="/storage//{{$producto->image1}}">
+        <img src="{{$producto->image1}}">
     @else
         <p>No se seleccionó un archivo.</p>
     @endif

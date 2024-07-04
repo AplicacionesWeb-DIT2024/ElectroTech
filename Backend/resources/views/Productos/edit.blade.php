@@ -3,7 +3,7 @@
 <i class="fa-solid fa-pen-to-square"></i>
 @endsection
 @section('formName')
-    Editar <b>{{$producto->nombre}}</b>
+    Editar {{$producto->nombre}}
 @endsection
 @section('action')
     action = "{{route('productos.update',$producto)}}"

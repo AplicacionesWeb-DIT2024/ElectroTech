@@ -19,9 +19,9 @@ return new class extends Migration
             $table->integer('precio');
             $table->integer('garantia');
             $table->integer('stock')->default('1');
-            $table->string('image1',80);
-            $table->string('image2',80)->nullable();
-            $table->string('image3',80)->nullable();
+            $table->string('image1');
+            $table->string('image2')->nullable();
+            $table->string('image3')->nullable();
             $table->timestamps();
         });
     }

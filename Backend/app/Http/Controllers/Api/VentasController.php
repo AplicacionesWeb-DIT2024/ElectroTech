@@ -29,12 +29,12 @@ class VentasController extends Controller
             }catch (\Exception $e) {
                 return response()->json([
                     'mensaje' => "No existe producto con id {$value['id']}"
-                ]);
+                ], 422);
             }
             if($producto->stock < $value['cantidad']){
                 return response()->json([
                     'mensaje' => "No hay stock suficiente del  producto con id {$producto->id}"
-                ]);
+                ], 422);
             }else{
                 array_push($data,[
                     'factura_id' => $factura->id,
@@ -58,13 +58,13 @@ class VentasController extends Controller
             $factura->delete();
             return response()->json([
                 'mensaje' => 'El precio total no coincide'
-            ]);
+            ], 422);
         }
 
         return response()->json([
             'cabecera' => $cabecera,
             'detalle' => $data
-        ]);
+        ],201);
     }
 
     public function index(Request $request){
@@ -79,6 +79,6 @@ class VentasController extends Controller
             ]);
         }
         return response($facturas);
-        return response()->json($ventas);
+        return response()->json($ventas,200);
     }
 }
