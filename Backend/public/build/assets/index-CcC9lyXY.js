@@ -1,0 +1,1 @@
+let t=document.querySelector("#btnEliminar"),n=document.querySelector("#lbl_nombre");window.setInfo=(e,r,i)=>{t.setAttribute("data-id",e),n.innerHTML="Eliminarás "+r+": <b>"+i+"</b>"};t.addEventListener("click",()=>{let e=t.getAttribute("data-id");document.querySelector("#frm_"+e).submit()});
