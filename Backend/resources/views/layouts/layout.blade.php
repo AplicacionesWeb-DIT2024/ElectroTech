@@ -53,6 +53,24 @@
                   </li>
                   </ul>
               </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Novedades
+                </a>
+                <ul class="dropdown-menu">    
+                  <li class="nav-item">
+                    <a class="dropdown-item" aria-current="page" href="{{url('news')}}">
+                    <i class="fa-solid fa-list"></i>  
+                    Listado</a>
+                  </li>
+                  <li class="dropdown-divider"></li>
+                  <li class="nav-item">
+                    <a class="dropdown-item" href="{{url('news/create')}}">
+                    <i class="fa-solid fa-plus"></i>
+                    Crear</a>
+                  </li>
+                </ul>
+              </li>
               <li class="nav-item">
                 <a class="nav-link text-white" href="{{route('logout')}}" role="button" aria-expanded="false">
                   Salir

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\NewsController;
 
 Route::get('welcome', function () {
     return view('welcome');
@@ -13,6 +14,7 @@ Route::middleware('auth')->group(function () {
     Route::view('home', 'home')->name('home');
     Route::resource('categorias', CategoriaController::class);
     Route::resource('productos', ProductoController::class);
+    Route::resource('news', NewsController::class);
     Route::get('logout',[LoginController::class, 'logout'])->name('logout');
     Route::get('logout',[LoginController::class, 'logout'])->name('logout');
 });

@@ -67,6 +67,11 @@
     @isset($producto) value="{{$producto->nombre}}" @endisset required>
 </div>
 <div class="input-group mb-3">
+    <span class="input-group-text"><i class="fa-solid fa-tag"></i></span>
+    <input type="text" name="marca" class="form-control" placeholder="Marca"
+    @isset($producto) value="{{$producto->marca}}" @endisset required>
+</div>
+<div class="input-group mb-3">
     <span class="input-group-text"><i class="fa-solid fa-keyboard"></i></span>
     <textarea class="form-control" style="height:150px" name="descripcion" placeholder="Descripción..."  required>@isset($producto) {{$producto->descripcion}} @endisset</textarea>
 </div>
@@ -89,10 +94,35 @@
     <input type="number" name="garantia" class="form-control" placeholder="Periodo de garantia"
     @isset($producto) value="{{$producto->garantia}}" @endisset required>
 </div>
-<div class="input-group mb-3">
-    <span class="input-group-text"><i class="fa-solid fa-boxes-stacked"></i></span>
-    <input type="number" name="stock" class="form-control" placeholder="Stock"
-    @isset($producto) value="{{$producto->stock}}" @endisset required>
+<div class="row mb-3 align-items-center">
+    <div class="col-md-6">
+        <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-boxes-stacked"></i></span>
+            <input 
+                type="number" 
+                name="stock" 
+                class="form-control" 
+                placeholder="Stock"
+                @isset($producto) value="{{ $producto->stock }}" @endisset 
+                required
+            >
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-check form-switch ms-3">
+            <input 
+                type="checkbox" 
+                name="featured" 
+                role="switch"
+                class="form-check-input" 
+                id="flexCheckDefault"
+                @isset($producto) @if($producto->featured) checked @endif @endisset
+            >
+            <label class="form-check-label" for="flexCheckDefault">
+                Destacado
+            </label>
+        </div>
+    </div>
 </div>
 
 <div class="input-group mb-3">

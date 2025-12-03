@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Valoracion;
+use App\Models\Factura;
 
 class User extends Authenticatable
 {
@@ -45,5 +47,13 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function valoraciones()
+    {
+        return $this->hasMany(Valoracion::class);
+    }
+    public function facturas()
+    {
+        return $this->hasMany(Factura::class);
     }
 }

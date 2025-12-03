@@ -1,0 +1,13 @@
+[phases.build]
+cmds = [
+  "composer install --no-dev --optimize-autoloader"
+]
+
+[phases.install]
+cmds = [
+  "apt-get update",
+  "apt-get install -y php-pgsql"
+]
+
+[variables]
+PHP_EXTENSIONS = "pdo_pgsql"

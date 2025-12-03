@@ -68,17 +68,15 @@ class VentasController extends Controller
     }
 
     public function index(Request $request){
-        $user =  auth('sanctum')->user();
-        $ventas = Factura::where('user_id', $user->id)->get();
-        $facturas = [];
-        foreach($ventas as $key => $venta){
-            $detalles = FacturaDetail::where('factura_id', $venta->id)->get();
-            array_push($facturas,[
-                'cabecera' => $venta,
-                'detalles' => $detalles,
-            ]);
-        }
-        return response($facturas);
-        return response()->json($ventas,200);
+    // Obtener el usuario autenticado
+    $user = auth('sanctum')->user();
+
+    // Obtener las facturas con sus detalles (relación cargada)
+    $facturas = Factura::with('detalles.producto') // Relación cargada
+                        ->where('user_id', $user->id)
+                        ->get();
+
+    // Retornar la respuesta con los datos en formato JSON
+    return response()->json($facturas, 200);
     }
 }

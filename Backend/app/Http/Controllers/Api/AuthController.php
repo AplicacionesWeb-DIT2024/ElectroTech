@@ -14,7 +14,7 @@ class AuthController extends Controller
         $fields = $request->validate([
             'name' => 'required|string',
             'email' => 'required|string|unique:users,email',
-            'password' => 'required|string'
+            'password' => 'required|string|confirmed'
         ]);
 
         $user = User::create([
@@ -23,37 +23,40 @@ class AuthController extends Controller
             'password' => Hash::make($fields['password'])
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        Auth::login($user);
 
         $response = [
             'user' => $user,
-            'token' => $token,
-            'token_type' => 'Bearer'
+            'message' => 'Usuario registrado correctamente',
         ];
 
         return response()->json($response, 201);
     }
 
     public function login(Request $request) {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
 
-        if(!Auth::attempt($request->only(['email', 'password']))) {
-            return response()->json(['message'=> 'Credentials do not match'], 401);
+        if (!Auth::attempt($credentials)) {
+            return response()->json(['message' => 'Credenciales incorrectas'], 401);
         }
 
-        $user = User::where('email', $request->email)->firstOrFail();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $request->session()->regenerate();
+
+        return response()->json(['user' => Auth::user()]);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return response()->json([
-            'user' => $user,
-            'token' => $token,
-            'token_type' => 'Bearer'
+            'message' => 'Sesión cerrada'
         ]);
-    }
-    public function logout() {
-        Auth::user()->currentAccessToken()->delete();
-
-        return [
-            'message' => 'You have succesfully been logged out and your token has been removed'
-        ];
     }
 }

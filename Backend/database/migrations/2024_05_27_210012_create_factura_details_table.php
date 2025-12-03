@@ -14,10 +14,20 @@ return new class extends Migration
         Schema::create('factura_details', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('factura_id')->constrained('facturas')->nullOnDelete()->cascadeOnUpdate();
-            $table->foreignId('producto_id')->constrained('productos')->nullOnDelete()->cascadeOnUpdate();
+
+            $table->foreignId('factura_id')
+                ->constrained('facturas')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+
+            $table->foreignId('producto_id')
+                ->constrained('productos')
+                ->restrictOnDelete()  // no queremos borrar productos vendidos
+                ->cascadeOnUpdate();
+
             $table->integer('cantidad');
-            $table->integer('precio_unitario');
+            $table->integer('precio_unitario'); // precio al momento de la compra
+            $table->integer('subtotal');        // cantidad * precio_unitario
         });
     }
 

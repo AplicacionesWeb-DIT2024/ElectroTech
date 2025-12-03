@@ -17,8 +17,10 @@ return new class extends Migration
             $table->text('descripcion');
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('restrict');
             $table->integer('precio');
+            $table->text('marca');
             $table->integer('garantia');
             $table->integer('stock')->default('1');
+            $table->boolean('featured')->default(false);
             $table->string('image1');
             $table->string('image2')->nullable();
             $table->string('image3')->nullable();
