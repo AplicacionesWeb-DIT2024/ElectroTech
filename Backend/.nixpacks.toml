@@ -1,13 +1,14 @@
-[phases.build]
-cmds = [
-  "composer install --no-dev --optimize-autoloader"
-]
-
 [phases.install]
 cmds = [
   "apt-get update",
-  "apt-get install -y php-pgsql"
+  "apt-get install -y php-pgsql php-bcmath"
+]
+
+[phases.build]
+cmds = [
+  "cd backend && composer install --no-dev --optimize-autoloader",
+  "cd backend && npm install && npm run build"
 ]
 
 [variables]
-PHP_EXTENSIONS = "pdo_pgsql"
+PHP_EXTENSIONS = "pdo_pgsql bcmath"
