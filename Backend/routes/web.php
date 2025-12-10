@@ -53,3 +53,18 @@ Route::get('/test-cloudinary', function () {
         ]);
     }
 });
+
+Route::get('/cloudinary-test', function () {
+    try {
+        $config = Cloudinary::configuration();
+        return response()->json([
+            'success' => true,
+            'config' => $config
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => $e->getMessage()
+        ]);
+    }
+});
