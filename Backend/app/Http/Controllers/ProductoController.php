@@ -13,25 +13,7 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductoController extends Controller
 {
-    private function uploadToCloudinary($file): string
-    {
-        // Mover a storage/app/tmp/
-        $path = $file->store('tmp');
 
-        // Ruta absoluta del archivo
-        $absolutePath = storage_path('app/' . $path);
-
-        // Subir a Cloudinary
-        $uploadedFile = Cloudinary::upload(
-            $absolutePath,
-            ['folder' => 'products']
-        );
-
-        // Eliminar archivo temporal después
-        unlink($absolutePath);
-
-        return $uploadedFile->getSecurePath();
-    }
 
 
     /**
@@ -55,30 +37,33 @@ class ProductoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'nombre' => 'required',
-            'descripcion' => 'required',
-            'categoria_id' => 'required',
-            'precio' => 'required',
-            'garantia' => 'required',
-            'image1' => 'required|image',
-            'image2' => 'nullable|image',
-            'image3' => 'nullable|image',
-        ]);
+public function store(Request $request): RedirectResponse
+{
+    $request->validate([
+        'nombre' => 'required',
+        'descripcion' => 'required',
+        'categoria_id' => 'required',
+        'precio' => 'required',
+        'garantia' => 'required',
+        'image1' => 'required|image',
+        'image2' => 'nullable|image',
+        'image3' => 'nullable|image',
+    ]);
 
-        $file = $request->file('image1');
-        $tmpPath = $file->getRealPath();
+    $imageUrls = [];
 
-        dd([
-            'tmp_real_path' => $tmpPath,
-            'exists' => file_exists($tmpPath),
-            'size' => filesize($tmpPath),
-        ]);
+    // Subir imágenes primero
+    foreach (['image1', 'image2', 'image3'] as $field) {
+        if ($request->hasFile($field)) {
+            $imageUrls[$field] = $this->uploadToCloudinary($request->file($field));
+        } else {
+            $imageUrls[$field] = null;
+        }
+    }
 
-        // Crear el producto vacío primero
-        $producto = Producto::create($request->only([
+    // Crear el producto con los URLs de las imágenes
+    $producto = Producto::create(array_merge(
+        $request->only([
             'nombre',
             'descripcion',
             'categoria_id',
@@ -86,25 +71,40 @@ class ProductoController extends Controller
             'garantia',
             'marca',
             'stock',
-            'featured',
-            'image1'
-        ]));
+            'featured'
+        ]),
+        $imageUrls // asigna image1, image2, image3
+    ));
 
-        // Subir imágenes
-        foreach (['image1', 'image2', 'image3'] as $field) {
-            if ($request->hasFile($field)) {
-                $url = $this->uploadToCloudinary($request->file($field));
+    return redirect()
+        ->route('productos.index')
+        ->with('success', 'Producto creado con éxito');
+}
 
-                $producto->{$field} = $url;
-            }
-        }
+/**
+ * Subir un archivo a Cloudinary de manera segura.
+ */
+private function uploadToCloudinary($file): string
+{
+    // Guardar temporalmente
+    $path = $file->store('tmp');
+    $absolutePath = storage_path('app/' . $path);
 
-        $producto->save();
-
-        return redirect()
-            ->route('productos.index')
-            ->with('success', 'Producto creado con éxito');
+    if (!file_exists($absolutePath)) {
+        throw new \Exception("Archivo temporal no encontrado: $absolutePath");
     }
+
+    try {
+        $uploadedFile = Cloudinary::upload($absolutePath, ['folder' => 'products']);
+    } catch (\Exception $e) {
+        unlink($absolutePath); // eliminar temporal
+        throw $e;
+    }
+
+    unlink($absolutePath); // eliminar temporal después de la subida
+
+    return $uploadedFile->getSecurePath();
+}
 
     /**
      * Display the specified resource.
