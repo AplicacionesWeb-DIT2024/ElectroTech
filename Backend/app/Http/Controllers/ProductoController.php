@@ -68,6 +68,15 @@ class ProductoController extends Controller
             'image3' => 'nullable|image',
         ]);
 
+        $file = $request->file('image1');
+        $tmpPath = $file->getRealPath();
+
+        dd([
+            'tmp_real_path' => $tmpPath,
+            'exists' => file_exists($tmpPath),
+            'size' => filesize($tmpPath),
+        ]);
+
         // Crear el producto vacío primero
         $producto = Producto::create($request->only([
             'nombre',
