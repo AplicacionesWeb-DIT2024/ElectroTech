@@ -78,6 +78,7 @@ class ProductoController extends Controller
             'marca',
             'stock',
             'featured',
+            'image1'
         ]));
 
         // Subir imágenes
