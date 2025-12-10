@@ -13,6 +13,27 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProductoController extends Controller
 {
+    private function uploadToCloudinary($file): string
+    {
+        // Mover a storage/app/tmp/
+        $path = $file->store('tmp');
+
+        // Ruta absoluta del archivo
+        $absolutePath = storage_path('app/' . $path);
+
+        // Subir a Cloudinary
+        $uploadedFile = Cloudinary::upload(
+            $absolutePath,
+            ['folder' => 'products']
+        );
+
+        // Eliminar archivo temporal después
+        unlink($absolutePath);
+
+        return $uploadedFile->getSecurePath();
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -34,7 +55,7 @@ class ProductoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse 
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'nombre' => 'required',
@@ -42,46 +63,37 @@ class ProductoController extends Controller
             'categoria_id' => 'required',
             'precio' => 'required',
             'garantia' => 'required',
-            'image1'=>'required|image'
+            'image1' => 'required|image',
+            'image2' => 'nullable|image',
+            'image3' => 'nullable|image',
         ]);
 
-        dd([
-            'file1' => $request->file('image1'),
-            'is_file' => $request->hasFile('image1'),
-            'cloudinary_url' => env('CLOUDINARY_URL'),
-        ]);
-        $producto = Producto::create($request->all());
+        // Crear el producto vacío primero
+        $producto = Producto::create($request->only([
+            'nombre',
+            'descripcion',
+            'categoria_id',
+            'precio',
+            'garantia',
+            'marca',
+            'stock',
+            'featured',
+        ]));
 
-        if($request->hasFile('image1')){
-            /* $nombre = $producto->id.'_1.'.$request->file('image1')->getClientOriginalExtension();
-            $img = $request->file('image1')->storeAs('public/img',$nombre);
-            $producto->image1 = '/img/'.$nombre; */
-            $cloudinaryImage = $request->file('image1')->storeOnCloudinary('products');
-            $public_id = $cloudinaryImage->getPublicId();
-            $url = $cloudinaryImage->getSecurePath();
-            $producto->image1 = $url;
-            $producto->save();
-        }
-        if($request->hasFile('image2')){
-            /* $nombre = $producto->id.'_2.'.$request->file('image2')->getClientOriginalExtension();
-            $img = $request->file('image2')->storeAs('public/img',$nombre);
-            $producto->image2 = '/img/'.$nombre; */
-            $cloudinaryImage = $request->file('image2')->storeOnCloudinary('products');
-            $url = $cloudinaryImage->getSecurePath();
-            $producto->image2 = $url;
-            $producto->save();
-        }
-        if($request->hasFile('image3')){
-            /* $nombre = $producto->id.'_3.'.$request->file('image3')->getClientOriginalExtension();
-            $img = $request->file('image3')->storeAs('public/img',$nombre);
-            $producto->image3 = '/img/'.$nombre; */
-            $cloudinaryImage = $request->file('image3')->storeOnCloudinary('products');
-            $url = $cloudinaryImage->getSecurePath();
-            $producto->image3 = $url;
-            $producto->save();
+        // Subir imágenes
+        foreach (['image1', 'image2', 'image3'] as $field) {
+            if ($request->hasFile($field)) {
+                $url = $this->uploadToCloudinary($request->file($field));
+
+                $producto->{$field} = $url;
+            }
         }
 
-        return redirect()->route('productos.index')->with('success','Producto creado con exito'); 
+        $producto->save();
+
+        return redirect()
+            ->route('productos.index')
+            ->with('success', 'Producto creado con éxito');
     }
 
     /**
