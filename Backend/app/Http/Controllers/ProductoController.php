@@ -44,6 +44,12 @@ class ProductoController extends Controller
             'garantia' => 'required',
             'image1'=>'required|image'
         ]);
+
+        dd([
+            'file1' => $request->file('image1'),
+            'is_file' => $request->hasFile('image1'),
+            'cloudinary_url' => env('CLOUDINARY_URL'),
+        ]);
         $producto = Producto::create($request->all());
 
         if($request->hasFile('image1')){
