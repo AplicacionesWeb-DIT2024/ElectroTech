@@ -55,7 +55,7 @@ class ProductoController extends Controller
         // Subir imágenes primero
         foreach (['image1', 'image2', 'image3'] as $field) {
             if ($request->hasFile($field)) {
-                $imageUrls[$field] = Storage::disk('cloudinary')->put('products',$request->file($field));
+                $imageUrls[$field] = $this->uploadToCloudinary($request->file($field));
             } else {
                 $imageUrls[$field] = null;
             }
@@ -86,24 +86,8 @@ class ProductoController extends Controller
      */
     private function uploadToCloudinary($file): string
     {
-        // Guardar temporalmente
-        $path = $file->store('tmp');
-        $absolutePath = storage_path('app/' . $path);
-
-        if (!file_exists($absolutePath)) {
-            throw new \Exception("Archivo temporal no encontrado: $absolutePath");
-        }
-
-        try {
-            $uploadedFile = Cloudinary::upload($absolutePath, ['folder' => 'products']);
-        } catch (\Exception $e) {
-            unlink($absolutePath); // eliminar temporal
-            throw $e;
-        }
-
-        unlink($absolutePath); // eliminar temporal después de la subida
-
-        return $uploadedFile->getSecurePath();
+        $path = Storage::disk('cloudinary')->put('products', $file);
+        return Storage::disk('cloudinary')->url($path);
     }
 
     /**
