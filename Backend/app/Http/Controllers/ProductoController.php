@@ -37,74 +37,74 @@ class ProductoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-public function store(Request $request): RedirectResponse
-{
-    $request->validate([
-        'nombre' => 'required',
-        'descripcion' => 'required',
-        'categoria_id' => 'required',
-        'precio' => 'required',
-        'garantia' => 'required',
-        'image1' => 'required|image',
-        'image2' => 'nullable|image',
-        'image3' => 'nullable|image',
-    ]);
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'nombre' => 'required',
+            'descripcion' => 'required',
+            'categoria_id' => 'required',
+            'precio' => 'required',
+            'garantia' => 'required',
+            'image1' => 'required|image',
+            'image2' => 'nullable|image',
+            'image3' => 'nullable|image',
+        ]);
 
-    $imageUrls = [];
+        $imageUrls = [];
 
-    // Subir imágenes primero
-    foreach (['image1', 'image2', 'image3'] as $field) {
-        if ($request->hasFile($field)) {
-            $imageUrls[$field] = $this->uploadToCloudinary($request->file($field));
-        } else {
-            $imageUrls[$field] = null;
+        // Subir imágenes primero
+        foreach (['image1', 'image2', 'image3'] as $field) {
+            if ($request->hasFile($field)) {
+                $imageUrls[$field] = Storage::disk('cloudinary')->put('products',$request->file($field));
+            } else {
+                $imageUrls[$field] = null;
+            }
         }
+
+        // Crear el producto con los URLs de las imágenes
+        $producto = Producto::create(array_merge(
+            $request->only([
+                'nombre',
+                'descripcion',
+                'categoria_id',
+                'precio',
+                'garantia',
+                'marca',
+                'stock',
+                'featured'
+            ]),
+            $imageUrls // asigna image1, image2, image3
+        ));
+
+        return redirect()
+            ->route('productos.index')
+            ->with('success', 'Producto creado con éxito');
     }
 
-    // Crear el producto con los URLs de las imágenes
-    $producto = Producto::create(array_merge(
-        $request->only([
-            'nombre',
-            'descripcion',
-            'categoria_id',
-            'precio',
-            'garantia',
-            'marca',
-            'stock',
-            'featured'
-        ]),
-        $imageUrls // asigna image1, image2, image3
-    ));
+    /**
+     * Subir un archivo a Cloudinary de manera segura.
+     */
+    private function uploadToCloudinary($file): string
+    {
+        // Guardar temporalmente
+        $path = $file->store('tmp');
+        $absolutePath = storage_path('app/' . $path);
 
-    return redirect()
-        ->route('productos.index')
-        ->with('success', 'Producto creado con éxito');
-}
+        if (!file_exists($absolutePath)) {
+            throw new \Exception("Archivo temporal no encontrado: $absolutePath");
+        }
 
-/**
- * Subir un archivo a Cloudinary de manera segura.
- */
-private function uploadToCloudinary($file): string
-{
-    // Guardar temporalmente
-    $path = $file->store('tmp');
-    $absolutePath = storage_path('app/' . $path);
+        try {
+            $uploadedFile = Cloudinary::upload($absolutePath, ['folder' => 'products']);
+        } catch (\Exception $e) {
+            unlink($absolutePath); // eliminar temporal
+            throw $e;
+        }
 
-    if (!file_exists($absolutePath)) {
-        throw new \Exception("Archivo temporal no encontrado: $absolutePath");
+        unlink($absolutePath); // eliminar temporal después de la subida
+
+        return $uploadedFile->getSecurePath();
     }
-
-    try {
-        $uploadedFile = Cloudinary::upload($absolutePath, ['folder' => 'products']);
-    } catch (\Exception $e) {
-        unlink($absolutePath); // eliminar temporal
-        throw $e;
-    }
-
-    unlink($absolutePath); // eliminar temporal después de la subida
-
-    return $uploadedFile->getSecurePath();
-}
 
     /**
      * Display the specified resource.
