@@ -123,6 +123,7 @@ const FeaturedProducts = () => {
                             src={imageSrc}
                             alt={nombre}
                             fill
+                            priority
                             className="object-cover transition duration-300 ease-in-out group-hover:scale-105 cursor-pointer"
                           />
                         </Link>
