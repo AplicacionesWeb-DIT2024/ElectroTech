@@ -59,9 +59,9 @@ class PaymentController extends Controller
             'items' => $mpItems,
             'external_reference' => (string)$orden->id, // ⭐ IMPORTANTE
             'back_urls' => [
-                'success' => 'https://localhost:3000/success',
-                'failure' => 'https://localhost:3000/failure',
-                'pending' => 'https://localhost:3000/pending',
+                'success' => env('FRONT_URL') . '/success',
+                'failure' => env('FRONT_URL') . '/failure',
+                'pending' => env('FRONT_URL') . '/pending',
             ],
             'auto_return' => 'approved'
         ]);
