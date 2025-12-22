@@ -11,7 +11,7 @@ export default function PageSuccessClient() {
 
     const params = useSearchParams();
 
-    useEffect(() => {
+/*     useEffect(() => {
         const paymentId = params.get("payment_id");
         if (!paymentId) return;
 
@@ -24,7 +24,7 @@ export default function PageSuccessClient() {
             .catch(err => {
                 console.error("Error al confirmar pago:", err);
             });
-    }, [params]);
+    }, [params]); */
 
     return (
         <div className="max-w-5xl p-4 mx-auto sm:py-16 sm:px-24">

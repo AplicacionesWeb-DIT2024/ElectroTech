@@ -22,7 +22,7 @@ export default function Page() {
     }
 
     return (
-        <div className="max-w-6xl py-4 mx-auto sm:py-16 sm:pl-12 sm:pr-16 lg:min-h-[80vh]">
+        <div className="max-w-6xl py-4 mx-auto sm:py-16 sm:pl-12 sm:pr-12 lg:min-h-[80vh]">
             
             <div className="grid sm:grid-cols-2">
                 <div>

@@ -10,7 +10,7 @@ const ChooseCategory = () => {
   const { result, loading }: ResponseType = useGetCategories();
 
   return (
-    <div className="max-w-6xl py-4 mx-auto sm:py-16 sm:px-24">
+    <div className="max-w-6xl py-4 mx-auto sm:py-16 sm:px-16">
       <h3 className="px-6 pb-4 text-3xl sm:pb-8 font-semibold">
         Elige tu categoría favorita
       </h3>
@@ -30,6 +30,7 @@ const ChooseCategory = () => {
                 <Image
                   src={category.image}
                   alt={category.nombre}
+                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                   fill
                   className="object-cover transition-transform duration-300 ease-in-out group-hover:scale-105"
                 />

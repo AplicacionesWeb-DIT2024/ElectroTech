@@ -1,25 +1,32 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type FilterPriceProps = {
   setPriceRange: (range: [number, number] | null) => void;
+  resetKey: number;
 };
 
-const FilterPrice = ({ setPriceRange }: FilterPriceProps) => {
+const FilterPrice = ({ setPriceRange, resetKey }: FilterPriceProps) => {
   const [min, setMin] = useState<number | "">("");
   const [max, setMax] = useState<number | "">("");
+
+  useEffect(() => {
+    setMin("");
+    setMax("")
+    setPriceRange(null);
+  }, [resetKey]);  
 
   const handleApply = () => {
     if (min === "" && max === "") {
       setPriceRange(null);
     } else {
-      setPriceRange([Number(min) || 0, Number(max) || Infinity]);
+      setPriceRange([Number(min) || 0, Number(max) || NaN]);
     }
   };
 
   return (
-    <div className="my-5">
+    <div className="border border-gray-200 shadow-sm rounded-lg p-2 my-5">
       <p className="mb-3 font-bold">Rango de precios</p>
 
       <div className="flex gap-2 items-center">

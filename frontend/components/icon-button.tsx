@@ -6,9 +6,10 @@ interface IconButtonProps {
     href?: string;            // ← añadimos esto
     icon: React.ReactElement;
     className?: string;
+    ariaLabel?: string
 }
 
-const IconButton = ({ onClick, href, icon, className }: IconButtonProps) => {
+const IconButton = ({ onClick, href, icon, className,ariaLabel }: IconButtonProps) => {
     
     const baseClasses = cn(
         "rounded-full flex items-center bg-white border shadow-md p-2 hover:scale-110 transition",
@@ -26,7 +27,7 @@ const IconButton = ({ onClick, href, icon, className }: IconButtonProps) => {
 
     // Caso normal → botón
     return (
-        <button onClick={onClick} className={baseClasses}>
+        <button onClick={onClick} className={baseClasses} aria-label={ariaLabel}>
             {icon}
         </button>
     );

@@ -34,6 +34,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <span className="px-2 py-1 text-xs text-white bg-black rounded-full dark:bg-white dark:text-black">
           {product.marca}
         </span>
+        <span className="px-2 py-1 text-xs text-white bg-yellow-900 rounded-full">
+          {product.categoria.nombre}
+        </span>
       </div>
 
       {/* CARRUSEL */}

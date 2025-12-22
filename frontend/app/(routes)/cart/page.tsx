@@ -9,8 +9,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useCheckout } from "@/hooks/useCheckout";
 import WalletButton from "@/components/payments/WalletButton";
-/* import { loadStripe } from "@stripe/stripe-js";
-import { makePaymentRequest } from "@/api/payment"; */
+
 
 export default function Page() {
   const { user, loading } = useAuth();
@@ -22,25 +21,7 @@ export default function Page() {
 
   const prices = items.map((product) => product.precio);
   const totalPrice = prices.reduce((total, price) => total + price, 0);
-  /* const stripePromise = loadStripe(
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
-  ); */
 
-  const buyStripe = async () => {
-    removeAll();
-/*     try {
-      const stripe = await stripePromise;
-      const res = await makePaymentRequest.post("/api/orders", {
-        products: items,
-      });
-      await stripe?.redirectToCheckout({
-        sessionId: res.data.stripeSession.id,
-      });
-      removeAll();
-    } catch (error) {
-      console.log(error);
-    } */
-  };
 
     useEffect(() => {
         if (!loading && !user) {
@@ -65,14 +46,14 @@ export default function Page() {
         </div>
         <div className="max-w-xl">
           <div className="p-6 rounded-lg bg-slate-100">
-            <p className="mb-3 text-lg font-semibold">Order Summary</p>
+            <p className="mb-3 text-black text-lg font-semibold">Resumen del pedido</p>
             <Separator />
             <div className="flex justify-between gap-5 my-4">
-              <p>Order total</p>
-              <p>{formatPrice(totalPrice)}</p>
+              <p className="text-black">Total</p>
+              <p className="text-black">{formatPrice(totalPrice)}</p>
             </div>
             <div className="flex items-center justify-center w-full mt-3">
-              <WalletButton />
+              {items.length > 0 && <WalletButton />}
             </div>
           </div>
         </div>

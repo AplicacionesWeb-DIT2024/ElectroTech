@@ -1,12 +1,13 @@
 "use client"
 
 import { BaggageClaim, Heart, ShoppingCart, User, Star, CreditCard, LogOut } from "lucide-react";
-import MenuList from "./menu-list";
+import SearchForm from "./search-form";
 import ItemsMenuMobile from "./items-menu-mobile";
 import ToggleTheme from "./toggle-theme";
 import { useCart } from "@/hooks/use-cart";
 import { useLovedProducts } from "@/hooks/use-loved-products";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/hooks/useAuth";
 import {
   DropdownMenu,
@@ -21,17 +22,29 @@ const Navbar = () => {
   const { user, logout } = useAuth();
 
   return (
-    <div className="flex items-center justify-between p-4 mx-auto sm:max-w-4xl md:max-w-6xl">
+    <div id="navbar" className="flex items-center justify-between p-4 mx-auto sm:max-w-4xl md:max-w-6xl lg:max-w-7xl">
       {/* LOGO */}
-      <Link href="/" className="cursor-pointer">
-        <h1 className="text-3xl">
+      <Link href="/" aria-label="Ir a la página principal">
+        {/* Logo mobile */}
+        <div className="sm:hidden">
+          <Image
+            src="/icon512_rounded.png"
+            alt="ElectroTech"
+            width={40}
+            height={40}
+            priority
+          />
+        </div>
+
+        {/* Logo desktop */}
+        <h1 className="hidden sm:block text-3xl">
           Electro<span className="font-bold">Tech</span>
         </h1>
       </Link>
 
       {/* MENU PRINCIPAL */}
-      <div className="hidden sm:flex items-center justify-between">
-        <MenuList />
+      <div className="flex flex-1 justify-center px-2 sm:px-6">
+        <SearchForm />
       </div>
 
       {/* MENU MOBILE */}
@@ -40,21 +53,21 @@ const Navbar = () => {
       </div>
 
       {/* ICONOS Y USUARIO */}
-      <div className="flex items-center justify-between gap-2 sm:gap-7">
+      <div className="hidden sm:flex items-center justify-between gap-7">
         {/* CARRITO */}
-        <Link href="/cart" className="relative">
-          {cart.items.length === 0 ? (
-            <ShoppingCart strokeWidth={1} className="cursor-pointer" />
-          ) : (
+        <Link href="/cart" className="relative" aria-label="Ir al carrito de compras">
+          {user && cart.items.length > 0 ? (
             <div className="flex gap-1 items-center cursor-pointer">
               <BaggageClaim strokeWidth={1} />
               <span className="text-sm">{cart.items.length}</span>
             </div>
+          ) : (
+            <ShoppingCart strokeWidth={1} className="cursor-pointer" />
           )}
         </Link>
 
         {/* FAVORITOS */}
-        <Link href="/loved-products">
+        <Link href="/loved-products" aria-label="Ir a los productos que me gustan">
           <Heart
             strokeWidth={1}
             className={`cursor-pointer ${lovedItems.length > 0 ? "fill-black dark:fill-white" : ""}`}

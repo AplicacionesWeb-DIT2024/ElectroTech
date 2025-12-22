@@ -86,12 +86,12 @@ const FeaturedProducts = () => {
   ); */
 
   return (
-    <div className="max-w-6xl py-4 mx-auto sm:py-16 sm:px-24">
+    <div className="max-w-6xl py-4 mx-auto sm:py-16 sm:px-16">
       <h3 className="px-6 text-3xl sm:pb-8">Productos destacados</h3>
 
       <Carousel>
         <CarouselContent className="-ml-2 md:-ml-4">
-          {loading && <SkeletonSchema grid={3} />}
+          {loading && <SkeletonSchema grid={3}/> }
 
           {result !== null &&
             result.map((product: ProductType) => {
@@ -118,13 +118,14 @@ const FeaturedProducts = () => {
 
                       {/* CONTENT: imagen del producto */}
                       <CardContent className="relative w-full aspect-[5/4] p-0 overflow-hidden">
-                        <Link href={`/product/${id}`}>
+                        <Link href={`/product/${id}`} className="block relative w-full h-full bg-white">
                           <Image
                             src={imageSrc}
                             alt={nombre}
-                            fill
+                            fill={true}
+                            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
                             priority
-                            className="object-cover transition duration-300 ease-in-out group-hover:scale-105 cursor-pointer"
+                            className="object-contain transition duration-300 ease-in-out group-hover:scale-105 cursor-pointer"
                           />
                         </Link>
 
@@ -137,6 +138,7 @@ const FeaturedProducts = () => {
                             />
                             <IconButton
                               onClick={() => addItem(product)}
+                              ariaLabel="Agregar producto al carrito"
                               icon={<ShoppingCart size={20} className="text-gray-600" />}
                             />
                           </div>

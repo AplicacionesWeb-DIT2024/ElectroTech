@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { ProductType } from "@/types/product";
-import { toast } from '@/hooks/use-toast'
+import { toast } from '@/hooks/use-toast';
 
 interface UseLovedProductsType {
     lovedItems: ProductType[],
@@ -26,7 +26,7 @@ export const useLovedProducts = create(persist<UseLovedProductsType>((set, get) 
             lovedItems: [...get().lovedItems, data]
         })
         toast({
-            title: " Producto añadido a la lista 🧡"
+            title: "Producto añadido a la lista 🧡"
         })
     },
     removeLovedItem: (id: number) => {

@@ -49,7 +49,7 @@ const Footer = () => {
                 <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">
                     &copy; 2025
                     <Link href="#">ElectroTech.</Link>
-                    Todos los derechos reservados
+                    Este sitio web es un trabajo para la universidad
                 </span>
             </div>
         </footer>

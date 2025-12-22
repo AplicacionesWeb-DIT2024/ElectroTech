@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import RatingForm from "./componets/rating-form";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from '@/hooks/use-toast';
 
 // Tipo de cada valoración pendiente
 interface PendingReview {
@@ -83,6 +84,9 @@ const PendingReviewsPage = () => {
           onSuccess={() => {
             setItems(items.filter(i => i.id !== selected.id));
             setSelected(null);
+            toast({
+              title: "Valoracion enviada 🧡"
+            })
           }}
         />
       )}

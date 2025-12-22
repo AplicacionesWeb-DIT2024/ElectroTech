@@ -21,12 +21,13 @@ const CarouselProduct = (props: CarouselProductProps) => {
         <CarouselContent>
           {images.map((image, index) => (
             <CarouselItem key={index} className="flex justify-center">
-              <div className="relative w-full max-w-[500px] aspect-square rounded-lg overflow-hidden border border-gray-300">
+              <div className="relative w-full max-w-[500px] aspect-square rounded-lg overflow-hidden border border-gray-300 bg-white">
                 <Image
                   src={image}
                   alt="Image product"
+                  sizes="(min-width: 1024px) 600px, (min-width: 640px) 50vw, 100vw"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
             </CarouselItem>

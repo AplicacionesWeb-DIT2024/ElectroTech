@@ -44,6 +44,7 @@ export default function WalletButton() {
   return (
     <Wallet
       initialization={{}}
+      customization={{theme:'dark'}}
       onSubmit={handleSubmit}
     />
   );
