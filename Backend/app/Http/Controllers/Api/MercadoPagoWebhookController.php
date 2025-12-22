@@ -16,14 +16,11 @@ class MercadoPagoWebhookController extends Controller
 {
 public function handle(Request $request)
 {
-    \Log::info("Webhook recibido", $request->all());
-
     // 1) Obtener payment id (puede NO venir en el simulador)
     $paymentId = $request->input("data.id");
 
     // Siempre responder 200 para que MP no haga timeout
     if (!$paymentId) {
-        \Log::warning("Webhook sin paymentId. Probablemente es el simulador.");
         return response()->json(["status" => "ok"], 200);
     }
 
@@ -33,7 +30,6 @@ public function handle(Request $request)
         $client = new PaymentClient();
         $payment = $client->get($paymentId);
     } catch (\Throwable $e) {
-        \Log::error("Error obteniendo pago MP: ".$e->getMessage());
         return response()->json(["status" => "ok"], 200);
     }
 
@@ -42,14 +38,12 @@ public function handle(Request $request)
     $status = $payment->status;
 
     if (!$externalRef) {
-        \Log::error("Pago sin external_reference. ID: ".$paymentId);
         return response()->json(["status" => "ok"], 200);
     }
 
     // 4) Obtener orden
     $orden = Orden::find($externalRef);
     if (!$orden) {
-        \Log::error("Orden no encontrada. external_reference: ".$externalRef);
         return response()->json(["status" => "ok"], 200);
     }
 
@@ -74,17 +68,26 @@ public function handle(Request $request)
             ]);
 
             // Crear factura items
-            foreach ($orden->items as $item) {
+            foreach ($orden->items as $i) {
+
+                $producto = Producto::find($i->producto_id);
+
+                if ($producto->stock < $i->cantidad) {
+                    // Si el stock no es suficiente, lanzamos un error o hacemos alguna acción
+                    throw new \Exception("No hay suficiente stock para el producto: " . $producto->nombre);
+                }
+
                 $factura->detalles()->create([
                     "producto_id" => $i->producto_id,
                     "cantidad" => $i->cantidad,
                     "precio_unitario" => $i->precio_unitario,
                     "subtotal" => $i->precio_unitario * $i->cantidad
                 ]);
+
+                $producto->stock -= $i->cantidad;
+                $producto->save();
             }
         });
-
-        \Log::info("Orden procesada correctamente", ["orden_id" => $orden->id]);
     }
 
     return response()->json(["status" => "ok"], 200);

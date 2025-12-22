@@ -14,8 +14,6 @@ use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 class ProductoController extends Controller
 {
 
-
-
     /**
      * Display a listing of the resource.
      */
@@ -81,14 +79,6 @@ class ProductoController extends Controller
             ->with('success', 'Producto creado con éxito');
     }
 
-    /**
-     * Subir un archivo a Cloudinary de manera segura.
-     */
-    private function uploadToCloudinary($file): string
-    {
-        $path = Storage::disk('cloudinary')->put('products', $file);
-        return Storage::disk('cloudinary')->url($path);
-    }
 
     /**
      * Display the specified resource.
@@ -121,41 +111,22 @@ class ProductoController extends Controller
         ]);
 
         if($request->hasFile('image1')){
-            /* Storage::disk('public')->delete($producto->image1);
-            $nombre = $producto->id.'_1.'.$request->file('image1')->getClientOriginalExtension();
-            $img = $request->file('image1')->storeAs('public/img',$nombre);
-            $producto->image1 = '/img/'.$nombre; */
-            Cloudinary::destroy($producto->image1);
-            $cloudinaryImage = $request->file('image1')->storeOnCloudinary('products');
-            /* $public_id = $cloudinaryImage->getPublicId(); */
-            $url = $cloudinaryImage->getSecurePath();
-            $producto->image1 = $url;
+            $this->deleteFromCloudinary($producto->image1);
+            $producto->image1 = $this->uploadToCloudinary($request->file('image1'));
             $producto->save();
         }
         if($request->hasFile('image2')){
             if (! is_null($producto->image2)){
-                /* Storage::disk('public')->delete($producto->image2); */
-                Cloudinary::destroy($producto->image2);
+                $this->deleteFromCloudinary($producto->image2);
             }
-            /* $nombre = $producto->id.'_2.'.$request->file('image2')->getClientOriginalExtension();
-            $img = $request->file('image2')->storeAs('public/img',$nombre);
-            $producto->image2 = '/img/'.$nombre; */
-            $cloudinaryImage = $request->file('image2')->storeOnCloudinary('products');
-            $url = $cloudinaryImage->getSecurePath();
-            $producto->image2 = $url;
+            $producto->image2 = $this->uploadToCloudinary($request->file('image2'));
             $producto->save();
         }
         if($request->hasFile('image3')){
             if (! is_null($producto->image3)){
-                /* Storage::disk('public')->delete($producto->image3); */
-                Cloudinary::destroy($producto->image3);
+                $this->deleteFromCloudinary($producto->image3);
             }
-            /* $nombre = $producto->id.'_3.'.$request->file('image3')->getClientOriginalExtension();
-            $img = $request->file('image3')->storeAs('public/img',$nombre);
-            $producto->image3 = '/img/'.$nombre; */
-            $cloudinaryImage = $request->file('image3')->storeOnCloudinary('products');
-            $url = $cloudinaryImage->getSecurePath();
-            $producto->image3 = $url;
+            $producto->image3 = $this->uploadToCloudinary($request->file($field));;
             $producto->save();
         }
         $producto->update($request->input());
@@ -183,10 +154,50 @@ class ProductoController extends Controller
         }
 
         foreach($images as $key => $value){
-            /* Storage::disk('public')->delete($value); */
-            Cloudinary::destroy($value);
+            $this->deleteFromCloudinary($value);
         }
         return redirect()->route('productos.index')->with('success','Producto eliminado');
 
+    }
+
+    /**
+     * Subir un archivo a Cloudinary de manera segura.
+    */
+    
+    private function uploadToCloudinary($file): string
+    {
+        $path = Storage::disk('cloudinary')->put('products', $file);
+        return Storage::disk('cloudinary')->url($path);
+    }
+    private function deleteFromCloudinary($url): bool
+    {
+         // Extraemos el path de la URL
+        $urlParts = parse_url($url);
+        $path = $urlParts['path']; // Esto será algo como "/v1234567890/products/imagen.jpg"
+        
+        // El public_id es todo después de "/upload/"
+        $pathParts = explode('/upload/', $path);
+        
+        $imageUrl = $pathParts[1] ?? '';
+        // Extraemos el public_id de la URL
+        $publicId = $this->getPublicIdFromUrl($imageUrl);
+        
+        // Elimina la imagen utilizando el disco de Cloudinary
+        return Storage::disk('cloudinary')->delete($publicId);
+    }
+
+    private function getPublicIdFromUrl($url): string
+    {
+        // Suponiendo que la URL tiene el formato: 
+        // https://res.cloudinary.com/tu_nombre_de_usuario/image/upload/v1234567890/products/imagen.jpg
+        
+        // Extraemos el path de la URL
+        $urlParts = parse_url($url);
+        $path = $urlParts['path']; // Esto será algo como "/v1234567890/products/imagen.jpg"
+        
+        // El public_id es todo después de "/upload/"
+        $pathParts = explode('/upload/', $path);
+        
+        return $pathParts[1] ?? ''; // Retornamos el public_id
     }
 }

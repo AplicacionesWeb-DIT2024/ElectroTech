@@ -17,6 +17,10 @@ Route::post('/register',[AuthController::class, 'register']);
 Route::get('/productos', [ProductController::class, 'index']);
 Route::get('/productosDestacados', [ProductController::class, 'featuredProducts']);
 Route::get('/productos/{id}', [ProductController::class, 'productById']);
+Route::get('/buscar', [ProductController::class, 'busqueda']);
+Route::get('/search/products', [ProductController::class, 'products']);
+Route::get('/search/filters', [ProductController::class, 'filters']);
+
 
 Route::get('/categorias', [CategoryController::class, 'index']);
 Route::get('/categorias/{slug}/productos-marcas', [CategoryController::class, 'productosYMarcasPorCategoria']);

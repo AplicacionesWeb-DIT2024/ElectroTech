@@ -9,8 +9,12 @@ use App\Models\Producto;
 
 class CategoryController extends Controller
 {
-     public function index(){
-        $categorias = Categoria::with('productos')->get();
+    public function index()
+    {
+        $categorias = Categoria::whereHas('productos', function ($q) {
+            $q->where('stock', '>', 0);
+        })->get();
+
         return response()->json($categorias, 200);
     }
 
@@ -99,7 +103,7 @@ class CategoryController extends Controller
             $query->where('precio', '<=', $request->precio_max);
         }
 
-        $productos = $query->paginate(10);
+        $productos = $query->paginate(9);
 
         return response()->json($productos, 200);
     }

@@ -28,7 +28,27 @@
                         <tr>
                             <td>{{ ($i+1) }}</td>
                             <td>{{ $row->nombre }}</td>
-                            <td>{{ $row->descripcion }}</td>
+                            <td style="max-width: 300px">
+                                <span>
+                                    {{ \Illuminate\Support\Str::limit($row->descripcion, 80) }}
+                                </span>
+
+                                @if(strlen($row->descripcion) > 80)
+                                    <a class="text-primary ms-1"
+                                    data-bs-toggle="collapse"
+                                    href="#desc{{ $row->id }}"
+                                    role="button"
+                                    aria-expanded="false">
+                                        Ver más
+                                    </a>
+
+                                    <div class="collapse mt-2" id="desc{{ $row->id }}">
+                                        <div class="card card-body p-2">
+                                            {{ $row->descripcion }}
+                                        </div>
+                                    </div>
+                                @endif
+                            </td>
                             <td>{{ $row->categoria->nombre }}</td>
                             <td>{{ $row->precio }}</td>
                             <td>{{ $row->garantia }}</td>
